@@ -3,45 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <title>Tạo đề</title>
+
 <style>
-body { background:#0f172a; color:white; text-align:center; }
-.box { background:#1e293b; padding:20px; width:300px; margin:100px auto; border-radius:10px; }
-input, select {
-  width:100%; padding:10px; margin:5px 0;
-  border:none; border-radius:5px;
+body {
+  background: #0f172a;
+  color: white;
+  font-family: Arial;
+  text-align: center;
 }
+
+.box {
+  background: #1e293b;
+  padding: 20px;
+  width: 350px;
+  margin: 50px auto;
+  border-radius: 10px;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 5px;
+}
+
 button {
-  width:100%; padding:10px;
-  background:#3b82f6; color:white;
-  border:none; border-radius:5px;
+  width: 100%;
+  padding: 10px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2563eb;
 }
 </style>
 </head>
+
 <body>
 
 <div class="box">
-<h2>Thêm câu hỏi</h2>
+  <h2>Tạo câu hỏi</h2>
 
-<input id="question" placeholder="Câu hỏi">
+  <input id="question" placeholder="Câu hỏi">
 
-<input id="a" placeholder="Đáp án A">
-<input id="b" placeholder="Đáp án B">
-<input id="c" placeholder="Đáp án C">
-<input id="d" placeholder="Đáp án D">
+  <input id="a" placeholder="Đáp án A">
+  <input id="b" placeholder="Đáp án B">
+  <input id="c" placeholder="Đáp án C">
+  <input id="d" placeholder="Đáp án D">
 
-<select id="type">
-  <option value="single">Trắc nghiệm</option>
-  <option value="truefalse">Đúng / Sai</option>
-  <option value="short">Trả lời ngắn</option>
-</select>
+  <select id="type">
+    <option value="single">Trắc nghiệm</option>
+    <option value="truefalse">Đúng / Sai</option>
+    <option value="short">Trả lời ngắn</option>
+  </select>
 
-<input id="correct" placeholder="Đáp án đúng">
+  <input id="correct" placeholder="Đáp án đúng">
 
-<button onclick="add()">Thêm</button>
+  <button onclick="add()">Thêm thủ công</button>
 
+  <hr>
+
+  <h3>Upload đề (.txt)</h3>
+  <input type="file" id="file">
+  <button onclick="upload()">Upload đề</button>
 </div>
 
 <script>
+// thêm thủ công
 function add() {
   const data = {
     question: document.getElementById("question").value,
@@ -60,6 +93,84 @@ function add() {
   })
   .then(res => res.json())
   .then(() => alert("Đã thêm!"));
+}
+
+// upload file txt
+function upload() {
+  const file = document.getElementById("file").files[0];
+  if (!file) return alert("Chọn file trước!");
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    parseText(e.target.result);
+  };
+
+  reader.readAsText(file);
+}
+
+// đọc file txt
+function parseText(text) {
+  let lines = text.split("\n");
+  let questions = [];
+  let current = null;
+
+  lines.forEach(line => {
+    line = line.trim();
+    if (!line) return;
+
+    // câu hỏi
+    if (!line.startsWith("A.") &&
+        !line.startsWith("B.") &&
+        !line.startsWith("C.") &&
+        !line.startsWith("D.") &&
+        !line.startsWith("_")) {
+
+      current = {
+        question: line,
+        a: "", b: "", c: "", d: "",
+        correct: "",
+        type: "single"
+      };
+
+      questions.push(current);
+    }
+
+    // đáp án
+    if (line.startsWith("A.")) current.a = clean(line, "a", current);
+    if (line.startsWith("B.")) current.b = clean(line, "b", current);
+    if (line.startsWith("C.")) current.c = clean(line, "c", current);
+    if (line.startsWith("D.")) current.d = clean(line, "d", current);
+
+    // tự luận / đúng sai
+    if (line.startsWith("_")) {
+      current.type = "short";
+      current.correct = line.replace(/_/g, "");
+    }
+  });
+
+  // gửi lên server
+  questions.forEach(q => {
+    fetch("/api/questions", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(q)
+    });
+  });
+
+  alert("Upload xong!");
+}
+
+// xử lý đáp án đúng
+function clean(line, key, obj) {
+  let text = line.substring(2).trim();
+
+  if (text.includes("_")) {
+    obj.correct = key;
+    text = text.replace(/_/g, "");
+  }
+
+  return text;
 }
 </script>
 
