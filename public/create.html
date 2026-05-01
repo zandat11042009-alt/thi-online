@@ -1,0 +1,30 @@
+<h2>Tạo câu hỏi</h2>
+
+<input id="q" placeholder="Câu hỏi"><br><br>
+<input id="a" placeholder="A"><br>
+<input id="b" placeholder="B"><br>
+<input id="c" placeholder="C"><br>
+<input id="d" placeholder="D"><br><br>
+
+<input id="correct" placeholder="Đáp án đúng (a/b/c/d)"><br><br>
+
+<button onclick="add()">Thêm</button>
+
+<script>
+function add() {
+    fetch("/add-question", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            q: q.value,
+            a: a.value,
+            b: b.value,
+            c: c.value,
+            d: d.value,
+            correct: correct.value
+        })
+    })
+    .then(res => res.json())
+    .then(data => alert(data.message));
+}
+</script>
