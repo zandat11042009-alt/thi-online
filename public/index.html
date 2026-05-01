@@ -1,17 +1,58 @@
-<div id="list"></div>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Thi Online</title>
+
+<style>
+body {
+    background: #0f172a;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+}
+
+.container {
+    margin-top: 100px;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    background: #3b82f6;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Hệ thống thi online</h1>
+
+    <button onclick="location.href='quiz.html'">Vào thi</button>
+    <button onclick="location.href='admin.html'">Admin</button>
+
+    <h3>Danh sách đề</h3>
+    <div id="list"></div>
+</div>
 
 <script>
 let data = JSON.parse(localStorage.getItem("questions")) || [];
 
-let html = "";
-
-data.forEach((q, i) => {
-    html += `
-        <div style="background:#1e293b; padding:10px; margin:10px; border-radius:8px;">
-            <b>Câu ${i+1}:</b> ${q.question}
-        </div>
-    `;
-});
-
-document.getElementById("list").innerHTML = html || "Chưa có đề nào";
+if (data.length === 0) {
+    document.getElementById("list").innerHTML = "Chưa có đề nào";
+} else {
+    let html = "";
+    data.forEach((q, i) => {
+        html += "<p>Câu " + (i+1) + ": " + q.question + "</p>";
+    });
+    document.getElementById("list").innerHTML = html;
+}
 </script>
+
+</body>
+</html>
