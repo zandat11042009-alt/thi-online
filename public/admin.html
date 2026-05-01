@@ -1,68 +1,19 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Admin</title>
+<h2>Đăng nhập Admin</h2>
 
-<style>
-body {
-  font-family: Arial;
-  background: #f4f6fb;
-  text-align: center;
-}
+<input id="user" placeholder="user"><br><br>
+<input id="pass" type="password" placeholder="pass"><br><br>
 
-.box {
-  background: white;
-  margin: 100px auto;
-  padding: 20px;
-  width: 300px;
-  border-radius: 10px;
-}
-
-input {
-  width: 90%;
-  padding: 10px;
-  margin: 10px;
-}
-
-button {
-  padding: 10px;
-  width: 100%;
-  background: #0f172a;
-  color: white;
-  border: none;
-  border-radius: 6px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="box">
-  <h2>Đăng nhập Admin</h2>
-
-  <input type="text" id="user" placeholder="Tài khoản">
-  <input type="password" id="pass" placeholder="Mật khẩu">
-
-  <button onclick="login()">Đăng nhập</button>
-</div>
+<button onclick="login()">Đăng nhập</button>
 
 <script>
 function login() {
-  const user = document.getElementById("user").value;
-  const pass = document.getElementById("pass").value;
+    let u = user.value;
+    let p = pass.value;
 
-  if (user === "admin" && pass === "123456") {
-    alert("Đăng nhập thành công!");
-
-    // 👉 QUAN TRỌNG: chuyển trang
-    window.location.href = "quiz.html";
-
-  } else {
-    alert("Sai tài khoản hoặc mật khẩu!");
-  }
+    if (u === "admin" && p === "123456") {
+        window.location.href = "create.html"; // 🔥 chuyển trang
+    } else {
+        alert("Sai tài khoản");
+    }
 }
 </script>
-
-</body>
-</html>
