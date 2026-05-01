@@ -2,100 +2,47 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Tạo câu hỏi</title>
+<title>Tạo đề</title>
 
 <style>
-body {
-    background: #0f172a;
-    color: white;
-    font-family: Arial;
-    text-align: center;
-}
-
-.box {
-    background: #1e293b;
-    padding: 20px;
-    margin: 50px auto;
-    width: 350px;
-    border-radius: 10px;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 5px;
-    border: none;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background: #3b82f6;
-    border: none;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #2563eb;
-}
+body { background:#0f172a; color:white; text-align:center; }
+.box { background:#1e293b; padding:20px; margin:50px auto; width:350px; border-radius:10px; }
+input { width:100%; padding:10px; margin:8px 0; border:none; border-radius:5px; }
+button { width:100%; padding:10px; background:#3b82f6; border:none; color:white; border-radius:5px; }
 </style>
-
 </head>
 
 <body>
 
 <div class="box">
-    <h2>Tạo câu hỏi</h2>
+<h2>Tạo câu hỏi</h2>
 
-    <input id="q" placeholder="Câu hỏi">
-    <input id="a" placeholder="Đáp án A">
-    <input id="b" placeholder="Đáp án B">
-    <input id="c" placeholder="Đáp án C">
-    <input id="d" placeholder="Đáp án D">
-    <input id="correct" placeholder="Đáp án đúng (a/b/c/d)">
+<input id="q" placeholder="Câu hỏi">
+<input id="a" placeholder="A">
+<input id="b" placeholder="B">
+<input id="c" placeholder="C">
+<input id="d" placeholder="D">
+<input id="correct" placeholder="Đáp án đúng (a/b/c/d)">
 
-    <button onclick="addQuestion()">Thêm</button>
+<button onclick="add()">Thêm</button>
 </div>
 
 <script>
-function addQuestion() {
-    let question = document.getElementById("q").value;
-    let a = document.getElementById("a").value;
-    let b = document.getElementById("b").value;
-    let c = document.getElementById("c").value;
-    let d = document.getElementById("d").value;
-    let correct = document.getElementById("correct").value;
-
-    if (!question || !a || !b || !c || !d || !correct) {
-        alert("Vui lòng nhập đầy đủ!");
-        return;
-    }
-
+function add() {
     let data = JSON.parse(localStorage.getItem("questions")) || [];
 
     data.push({
-        question,
-        a,
-        b,
-        c,
-        d,
-        correct
+        question: q.value,
+        a: a.value,
+        b: b.value,
+        c: c.value,
+        d: d.value,
+        correct: correct.value
     });
 
     localStorage.setItem("questions", JSON.stringify(data));
 
-    alert("Đã thêm câu hỏi!");
-
-    // reset input
-    document.getElementById("q").value = "";
-    document.getElementById("a").value = "";
-    document.getElementById("b").value = "";
-    document.getElementById("c").value = "";
-    document.getElementById("d").value = "";
-    document.getElementById("correct").value = "";
+    alert("Đã thêm!");
 }
 </script>
 
