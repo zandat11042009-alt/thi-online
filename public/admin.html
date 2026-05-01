@@ -3,28 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin</title>
+
 <style>
 body {
   font-family: Arial;
   background: #f4f6fb;
   text-align: center;
 }
+
 .box {
   background: white;
-  margin: 50px auto;
+  margin: 100px auto;
   padding: 20px;
   width: 300px;
   border-radius: 10px;
 }
+
 input {
   width: 90%;
-  padding: 8px;
-  margin: 10px 0;
+  padding: 10px;
+  margin: 10px;
 }
+
 button {
   padding: 10px;
   width: 100%;
-  background: #2563eb;
+  background: #0f172a;
   color: white;
   border: none;
   border-radius: 6px;
@@ -36,8 +40,10 @@ button {
 
 <div class="box">
   <h2>Đăng nhập Admin</h2>
+
   <input type="text" id="user" placeholder="Tài khoản">
   <input type="password" id="pass" placeholder="Mật khẩu">
+
   <button onclick="login()">Đăng nhập</button>
 </div>
 
@@ -46,10 +52,14 @@ function login() {
   const user = document.getElementById("user").value;
   const pass = document.getElementById("pass").value;
 
-  if(user === "admin" && pass === "123456") {
+  if (user === "admin" && pass === "123456") {
     alert("Đăng nhập thành công!");
+
+    // 👉 QUAN TRỌNG: chuyển trang
+    window.location.href = "quiz.html";
+
   } else {
-    alert("Sai tài khoản!");
+    alert("Sai tài khoản hoặc mật khẩu!");
   }
 }
 </script>
