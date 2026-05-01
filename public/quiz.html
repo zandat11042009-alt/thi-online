@@ -1,39 +1,21 @@
-<h2>Làm bài</h2>
-
 <div id="quiz"></div>
 
-<button onclick="submit()">Nộp bài</button>
-
 <script>
-let data = [];
+let data = JSON.parse(localStorage.getItem("questions")) || [];
 
-fetch("/questions")
-.then(res => res.json())
-.then(qs => {
-    data = qs;
-    let html = "";
+let html = "";
 
-    qs.forEach((q, i) => {
-        html += `
-        <p>${q.q}</p>
-        <input type="radio" name="q${i}" value="a"> ${q.a}<br>
-        <input type="radio" name="q${i}" value="b"> ${q.b}<br>
-        <input type="radio" name="q${i}" value="c"> ${q.c}<br>
-        <input type="radio" name="q${i}" value="d"> ${q.d}<br><br>
-        `;
-    });
-
-    document.getElementById("quiz").innerHTML = html;
+data.forEach((q, i) => {
+    html += `
+        <div>
+            <p>${i+1}. ${q.question}</p>
+            <button>${q.a}</button><br>
+            <button>${q.b}</button><br>
+            <button>${q.c}</button><br>
+            <button>${q.d}</button><br>
+        </div>
+    `;
 });
 
-function submit() {
-    let score = 0;
-
-    data.forEach((q, i) => {
-        let ans = document.querySelector(`input[name=q${i}]:checked`);
-        if (ans && ans.value === q.correct) score++;
-    });
-
-    alert("Điểm: " + score);
-}
+document.getElementById("quiz").innerHTML = html;
 </script>
