@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <title>Làm bài</title>
 <style>
-body { background:#0f172a; color:white; text-align:center; }
-.box { background:#1e293b; padding:20px; margin:20px auto; width:400px; border-radius:10px; }
-button { padding:10px; margin-top:10px; }
+body { background:#0f172a; color:white; font-family:Arial; text-align:center; }
+.box { background:#1e293b; padding:15px; margin:15px; border-radius:10px; }
 </style>
 </head>
+
 <body>
 
-<h1>Làm bài</h1>
+<h2>Làm bài thi</h2>
 
 <div id="quiz"></div>
 
@@ -21,64 +21,44 @@ button { padding:10px; margin-top:10px; }
 let questions = [];
 let answers = [];
 
-fetch("/api/questions")
-  .then(res => res.json())
-  .then(data => {
-    questions = data;
-    show();
-  });
+async function load() {
+  const res = await fetch("/api/questions");
+  questions = await res.json();
 
-function show() {
   let html = "";
 
   questions.forEach((q, i) => {
     html += `<div class="box">
-      <h3>${q.question}</h3>`;
+      <h3>${i+1}. ${q.question}</h3>`;
 
-    if (q.type === "single") {
-      html += `
-        <label><input type="radio" name="q${i}" value="a"> ${q.a}</label><br>
-        <label><input type="radio" name="q${i}" value="b"> ${q.b}</label><br>
-        <label><input type="radio" name="q${i}" value="c"> ${q.c}</label><br>
-        <label><input type="radio" name="q${i}" value="d"> ${q.d}</label>
-      `;
-    }
+    ["A","B","C","D"].forEach(k => {
+      if(q[k]){
+        html += `
+        <label>
+          <input type="radio" name="q${i}" value="${k}" 
+          onchange="answers[${i}]='${k}'">
+          ${q[k]}
+        </label><br>`;
+      }
+    });
 
-    if (q.type === "truefalse") {
-      html += `
-        <label><input type="radio" name="q${i}" value="true"> Đúng</label><br>
-        <label><input type="radio" name="q${i}" value="false"> Sai</label>
-      `;
-    }
-
-    if (q.type === "short") {
-      html += `<input id="q${i}" placeholder="Nhập đáp án">`;
-    }
-
-    html += `</div>`;
+    html += "</div>";
   });
 
   document.getElementById("quiz").innerHTML = html;
 }
 
-function submit() {
+async function submit() {
   let score = 0;
 
   questions.forEach((q, i) => {
-    let ans;
-
-    if (q.type === "short") {
-      ans = document.getElementById("q"+i).value;
-    } else {
-      const checked = document.querySelector(`input[name="q${i}"]:checked`);
-      ans = checked ? checked.value : "";
-    }
-
-    if (ans == q.correct) score++;
+    if (answers[i] == q.correct) score++;
   });
 
   alert("Điểm: " + score + "/" + questions.length);
 }
+
+load();
 </script>
 
 </body>
