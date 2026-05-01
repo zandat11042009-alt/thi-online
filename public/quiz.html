@@ -1,60 +1,39 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Làm bài</title>
-<style>
-body {
-  font-family: Arial;
-  background: #f4f6fb;
-}
-.container {
-  background: white;
-  margin: 50px auto;
-  padding: 20px;
-  width: 400px;
-  border-radius: 10px;
-}
-button {
-  margin-top: 10px;
-  padding: 10px;
-  width: 100%;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 6px;
-}
-</style>
-</head>
+<h2>Làm bài</h2>
 
-<body>
+<div id="quiz"></div>
 
-<div class="container">
-  <h3>Câu 1: 2 + 2 = ?</h3>
-
-  <input type="radio" name="q1" value="3"> 3<br>
-  <input type="radio" name="q1" value="4"> 4<br>
-  <input type="radio" name="q1" value="5"> 5<br>
-
-  <button onclick="submitQuiz()">Nộp bài</button>
-</div>
+<button onclick="submit()">Nộp bài</button>
 
 <script>
-function submitQuiz() {
-  const answer = document.querySelector('input[name="q1"]:checked');
+let data = [];
 
-  if(!answer) {
-    alert("Chọn đáp án!");
-    return;
-  }
+fetch("/questions")
+.then(res => res.json())
+.then(qs => {
+    data = qs;
+    let html = "";
 
-  if(answer.value === "4") {
-    alert("Đúng!");
-  } else {
-    alert("Sai!");
-  }
+    qs.forEach((q, i) => {
+        html += `
+        <p>${q.q}</p>
+        <input type="radio" name="q${i}" value="a"> ${q.a}<br>
+        <input type="radio" name="q${i}" value="b"> ${q.b}<br>
+        <input type="radio" name="q${i}" value="c"> ${q.c}<br>
+        <input type="radio" name="q${i}" value="d"> ${q.d}<br><br>
+        `;
+    });
+
+    document.getElementById("quiz").innerHTML = html;
+});
+
+function submit() {
+    let score = 0;
+
+    data.forEach((q, i) => {
+        let ans = document.querySelector(`input[name=q${i}]:checked`);
+        if (ans && ans.value === q.correct) score++;
+    });
+
+    alert("Điểm: " + score);
 }
 </script>
-
-</body>
-</html>
