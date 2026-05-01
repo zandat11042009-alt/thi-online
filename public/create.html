@@ -1,25 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
 <head>
+<meta charset="UTF-8">
+<title>Tạo câu hỏi</title>
+
 <style>
 body {
     background: #0f172a;
     color: white;
+    font-family: Arial;
     text-align: center;
 }
 
+.box {
+    background: #1e293b;
+    padding: 20px;
+    margin: 50px auto;
+    width: 350px;
+    border-radius: 10px;
+}
+
 input {
-    width: 300px;
+    width: 100%;
     padding: 10px;
-    margin: 5px;
+    margin: 8px 0;
     border-radius: 5px;
     border: none;
 }
 
 button {
-    padding: 10px 20px;
-    background: #22c55e;
+    width: 100%;
+    padding: 10px;
+    background: #3b82f6;
     border: none;
     color: white;
     border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2563eb;
 }
 </style>
+
 </head>
+
+<body>
+
+<div class="box">
+    <h2>Tạo câu hỏi</h2>
+
+    <input id="q" placeholder="Câu hỏi">
+    <input id="a" placeholder="Đáp án A">
+    <input id="b" placeholder="Đáp án B">
+    <input id="c" placeholder="Đáp án C">
+    <input id="d" placeholder="Đáp án D">
+    <input id="correct" placeholder="Đáp án đúng (a/b/c/d)">
+
+    <button onclick="addQuestion()">Thêm</button>
+</div>
+
+<script>
+function addQuestion() {
+    let question = document.getElementById("q").value;
+    let a = document.getElementById("a").value;
+    let b = document.getElementById("b").value;
+    let c = document.getElementById("c").value;
+    let d = document.getElementById("d").value;
+    let correct = document.getElementById("correct").value;
+
+    if (!question || !a || !b || !c || !d || !correct) {
+        alert("Vui lòng nhập đầy đủ!");
+        return;
+    }
+
+    let data = JSON.parse(localStorage.getItem("questions")) || [];
+
+    data.push({
+        question,
+        a,
+        b,
+        c,
+        d,
+        correct
+    });
+
+    localStorage.setItem("questions", JSON.stringify(data));
+
+    alert("Đã thêm câu hỏi!");
+
+    // reset input
+    document.getElementById("q").value = "";
+    document.getElementById("a").value = "";
+    document.getElementById("b").value = "";
+    document.getElementById("c").value = "";
+    document.getElementById("d").value = "";
+    document.getElementById("correct").value = "";
+}
+</script>
+
+</body>
+</html>
