@@ -1,119 +1,17 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Thi Online</title>
+<div id="list"></div>
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: linear-gradient(180deg, #020617, #0f172a);
-    color: white;
-}
+<script>
+let data = JSON.parse(localStorage.getItem("questions")) || [];
 
-/* NAVBAR */
-.nav {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 30px;
-    background: #020617;
-    border-bottom: 1px solid #1e293b;
-}
+let html = "";
 
-.nav a {
-    color: #94a3b8;
-    text-decoration: none;
-    margin-left: 20px;
-}
+data.forEach((q, i) => {
+    html += `
+        <div style="background:#1e293b; padding:10px; margin:10px; border-radius:8px;">
+            <b>Câu ${i+1}:</b> ${q.question}
+        </div>
+    `;
+});
 
-.nav a:hover {
-    color: white;
-}
-
-/* CENTER */
-.center {
-    text-align: center;
-    margin-top: 100px;
-}
-
-h1 {
-    font-size: 42px;
-}
-
-p {
-    color: #94a3b8;
-}
-
-/* BUTTON */
-.btn {
-    padding: 12px 25px;
-    margin: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.primary {
-    background: #3b82f6;
-    border: none;
-    color: white;
-}
-
-.primary:hover {
-    background: #2563eb;
-}
-
-.secondary {
-    background: transparent;
-    border: 1px solid #3b82f6;
-    color: #3b82f6;
-}
-
-.secondary:hover {
-    background: #3b82f6;
-    color: white;
-}
-
-/* BOX */
-.box {
-    width: 80%;
-    margin: 60px auto;
-    background: #1e293b;
-    padding: 20px;
-    border-radius: 10px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="nav">
-    <b>🎓 Thi Online</b>
-    <div>
-        <a href="#">Trang chủ</a>
-        <a href="quiz.html">Vào thi</a>
-        <a href="admin.html">Admin</a>
-    </div>
-</div>
-
-<div class="center">
-    <h1>Hệ thống thi trắc nghiệm online</h1>
-    <p>Làm bài và xem điểm ngay lập tức</p>
-
-    <a href="quiz.html">
-        <button class="btn primary">Vào làm bài</button>
-    </a>
-
-    <a href="admin.html">
-        <button class="btn secondary">Đăng nhập admin</button>
-    </a>
-</div>
-
-<div class="box">
-    <h3>Các đề đang mở</h3>
-    <p>Đang tải...</p>
-</div>
-
-</body>
-</html>
+document.getElementById("list").innerHTML = html || "Chưa có đề nào";
+</script>
