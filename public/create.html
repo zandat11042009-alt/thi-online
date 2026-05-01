@@ -3,46 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <title>Tạo đề</title>
-
 <style>
 body { background:#0f172a; color:white; text-align:center; }
-.box { background:#1e293b; padding:20px; margin:50px auto; width:350px; border-radius:10px; }
-input { width:100%; padding:10px; margin:8px 0; border:none; border-radius:5px; }
-button { width:100%; padding:10px; background:#3b82f6; border:none; color:white; border-radius:5px; }
+.box { background:#1e293b; padding:20px; width:300px; margin:100px auto; border-radius:10px; }
+input, select {
+  width:100%; padding:10px; margin:5px 0;
+  border:none; border-radius:5px;
+}
+button {
+  width:100%; padding:10px;
+  background:#3b82f6; color:white;
+  border:none; border-radius:5px;
+}
 </style>
 </head>
-
 <body>
 
 <div class="box">
-<h2>Tạo câu hỏi</h2>
+<h2>Thêm câu hỏi</h2>
 
-<input id="q" placeholder="Câu hỏi">
-<input id="a" placeholder="A">
-<input id="b" placeholder="B">
-<input id="c" placeholder="C">
-<input id="d" placeholder="D">
-<input id="correct" placeholder="Đáp án đúng (a/b/c/d)">
+<input id="question" placeholder="Câu hỏi">
+
+<input id="a" placeholder="Đáp án A">
+<input id="b" placeholder="Đáp án B">
+<input id="c" placeholder="Đáp án C">
+<input id="d" placeholder="Đáp án D">
+
+<select id="type">
+  <option value="single">Trắc nghiệm</option>
+  <option value="truefalse">Đúng / Sai</option>
+  <option value="short">Trả lời ngắn</option>
+</select>
+
+<input id="correct" placeholder="Đáp án đúng">
 
 <button onclick="add()">Thêm</button>
+
 </div>
 
 <script>
 function add() {
-    let data = JSON.parse(localStorage.getItem("questions")) || [];
+  const data = {
+    question: document.getElementById("question").value,
+    a: document.getElementById("a").value,
+    b: document.getElementById("b").value,
+    c: document.getElementById("c").value,
+    d: document.getElementById("d").value,
+    type: document.getElementById("type").value,
+    correct: document.getElementById("correct").value
+  };
 
-    data.push({
-        question: q.value,
-        a: a.value,
-        b: b.value,
-        c: c.value,
-        d: d.value,
-        correct: correct.value
-    });
-
-    localStorage.setItem("questions", JSON.stringify(data));
-
-    alert("Đã thêm!");
+  fetch("/api/questions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(() => alert("Đã thêm!"));
 }
 </script>
 
