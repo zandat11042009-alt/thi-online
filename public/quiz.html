@@ -3,50 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <title>Làm bài</title>
-
 <style>
-body { background:#0f172a; color:white; font-family:Arial; }
-.box { width:500px; margin:30px auto; }
-button { margin:5px; padding:10px; width:100%; }
-.submit { background:#22c55e; }
+body { background:#0f172a; color:white; text-align:center; }
+.box { background:#1e293b; padding:20px; margin:20px auto; width:400px; border-radius:10px; }
+button { padding:10px; margin-top:10px; }
 </style>
 </head>
-
 <body>
 
-<div class="box">
-<h2>Làm bài</h2>
+<h1>Làm bài</h1>
+
 <div id="quiz"></div>
-<button class="submit" onclick="submit()">Nộp bài</button>
-</div>
+
+<button onclick="submit()">Nộp bài</button>
 
 <script>
-let data = JSON.parse(localStorage.getItem("questions")) || [];
-let html = "";
+let questions = [];
+let answers = [];
 
-data.forEach((q, i) => {
-    html += `
-    <div>
-        <p>${i+1}. ${q.question}</p>
+fetch("/api/questions")
+  .then(res => res.json())
+  .then(data => {
+    questions = data;
+    show();
+  });
+
+function show() {
+  let html = "";
+
+  questions.forEach((q, i) => {
+    html += `<div class="box">
+      <h3>${q.question}</h3>`;
+
+    if (q.type === "single") {
+      html += `
         <label><input type="radio" name="q${i}" value="a"> ${q.a}</label><br>
         <label><input type="radio" name="q${i}" value="b"> ${q.b}</label><br>
         <label><input type="radio" name="q${i}" value="c"> ${q.c}</label><br>
-        <label><input type="radio" name="q${i}" value="d"> ${q.d}</label><br>
-    </div>
-    `;
-});
+        <label><input type="radio" name="q${i}" value="d"> ${q.d}</label>
+      `;
+    }
 
-document.getElementById("quiz").innerHTML = html;
+    if (q.type === "truefalse") {
+      html += `
+        <label><input type="radio" name="q${i}" value="true"> Đúng</label><br>
+        <label><input type="radio" name="q${i}" value="false"> Sai</label>
+      `;
+    }
+
+    if (q.type === "short") {
+      html += `<input id="q${i}" placeholder="Nhập đáp án">`;
+    }
+
+    html += `</div>`;
+  });
+
+  document.getElementById("quiz").innerHTML = html;
+}
 
 function submit() {
-    let score = 0;
+  let score = 0;
 
-    data.forEach((q, i) => {
-        let ans = document.querySelector(`input[name=q${i}]:checked`);
-        if (ans && ans.value === q.correct) score++;
-    });
+  questions.forEach((q, i) => {
+    let ans;
 
-    alert("Bạn đúng " + score + "/" + data.length);
+    if (q.type === "short") {
+      ans = document.getElementById("q"+i).value;
+    } else {
+      const checked = document.querySelector(`input[name="q${i}"]:checked`);
+      ans = checked ? checked.value : "";
+    }
+
+    if (ans == q.correct) score++;
+  });
+
+  alert("Điểm: " + score + "/" + questions.length);
 }
 </script>
 
