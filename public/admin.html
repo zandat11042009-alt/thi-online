@@ -1,19 +1,30 @@
-<h2>Đăng nhập Admin</h2>
-
-<input id="user" placeholder="user"><br><br>
-<input id="pass" type="password" placeholder="pass"><br><br>
-
-<button onclick="login()">Đăng nhập</button>
-
-<script>
-function login() {
-    let u = user.value;
-    let p = pass.value;
-
-    if (u === "admin" && p === "123456") {
-        window.location.href = "create.html"; // 🔥 chuyển trang
-    } else {
-        alert("Sai tài khoản");
-    }
+body {
+    background: #0f172a;
+    color: white;
+    text-align: center;
 }
-</script>
+
+.box {
+    background: #1e293b;
+    padding: 20px;
+    margin: 100px auto;
+    width: 300px;
+    border-radius: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #3b82f6;
+    border: none;
+    color: white;
+    border-radius: 5px;
+}
