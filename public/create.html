@@ -5,41 +5,16 @@
 <title>Tạo đề</title>
 
 <style>
-body {
-  background: #0f172a;
-  color: white;
-  font-family: Arial;
-  text-align: center;
-}
-
-.box {
-  background: #1e293b;
-  padding: 20px;
-  width: 350px;
-  margin: 50px auto;
-  border-radius: 10px;
-}
-
+body { background:#0f172a; color:white; font-family:Arial; text-align:center; }
+.box { background:#1e293b; padding:20px; margin:50px auto; width:350px; border-radius:10px; }
 input, select {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  border: none;
-  border-radius: 5px;
+  width:100%; padding:10px; margin:5px 0;
+  border:none; border-radius:5px;
 }
-
 button {
-  width: 100%;
-  padding: 10px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #2563eb;
+  width:100%; padding:10px;
+  background:#3b82f6; color:white;
+  border:none; border-radius:5px;
 }
 </style>
 </head>
@@ -47,130 +22,94 @@ button:hover {
 <body>
 
 <div class="box">
-  <h2>Tạo câu hỏi</h2>
+<h2>Tạo câu hỏi</h2>
 
-  <input id="question" placeholder="Câu hỏi">
+<input id="q" placeholder="Câu hỏi">
+<input id="a" placeholder="A">
+<input id="b" placeholder="B">
+<input id="c" placeholder="C">
+<input id="d" placeholder="D">
 
-  <input id="a" placeholder="Đáp án A">
-  <input id="b" placeholder="Đáp án B">
-  <input id="c" placeholder="Đáp án C">
-  <input id="d" placeholder="Đáp án D">
+<select id="correct">
+  <option value="A">Đáp án A</option>
+  <option value="B">Đáp án B</option>
+  <option value="C">Đáp án C</option>
+  <option value="D">Đáp án D</option>
+</select>
 
-  <select id="type">
-    <option value="single">Trắc nghiệm</option>
-    <option value="truefalse">Đúng / Sai</option>
-    <option value="short">Trả lời ngắn</option>
-  </select>
+<button onclick="save()">Lưu câu hỏi</button>
 
-  <input id="correct" placeholder="Đáp án đúng">
+<hr>
 
-  <button onclick="add()">Thêm thủ công</button>
+<h3>Upload file (.txt)</h3>
+<input type="file" id="file">
+<button onclick="upload()">Upload</button>
 
-  <hr>
-
-  <h3>Upload đề (.txt)</h3>
-  <input type="file" id="file">
-  <button onclick="upload()">Upload đề</button>
 </div>
 
 <script>
-// thêm thủ công
-function add() {
+// lưu thủ công
+async function save() {
   const data = {
-    question: document.getElementById("question").value,
-    a: document.getElementById("a").value,
-    b: document.getElementById("b").value,
-    c: document.getElementById("c").value,
-    d: document.getElementById("d").value,
-    type: document.getElementById("type").value,
-    correct: document.getElementById("correct").value
+    question: q.value,
+    A: a.value,
+    B: b.value,
+    C: c.value,
+    D: d.value,
+    correct: correct.value
   };
 
-  fetch("/api/questions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  await fetch("/api/questions", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
     body: JSON.stringify(data)
-  })
-  .then(res => res.json())
-  .then(() => alert("Đã thêm!"));
+  });
+
+  alert("Đã lưu!");
 }
 
 // upload file txt
 function upload() {
   const file = document.getElementById("file").files[0];
-  if (!file) return alert("Chọn file trước!");
+  if(!file) return alert("Chọn file");
 
   const reader = new FileReader();
 
-  reader.onload = function(e) {
-    parseText(e.target.result);
+  reader.onload = async function(e) {
+    const text = e.target.result;
+
+    const blocks = text.split("\n\n");
+
+    for (let block of blocks) {
+      const lines = block.split("\n");
+
+      if(lines.length < 5) continue;
+
+      let obj = {
+        question: lines[0],
+        A: lines[1],
+        B: lines[2],
+        C: lines[3],
+        D: lines[4],
+        correct: ""
+      };
+
+      if (lines[1].includes("*")) obj.correct = "A";
+      if (lines[2].includes("*")) obj.correct = "B";
+      if (lines[3].includes("*")) obj.correct = "C";
+      if (lines[4].includes("*")) obj.correct = "D";
+
+      await fetch("/api/questions", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify(obj)
+      });
+    }
+
+    alert("Upload xong!");
   };
 
   reader.readAsText(file);
-}
-
-// đọc file txt
-function parseText(text) {
-  let lines = text.split("\n");
-  let questions = [];
-  let current = null;
-
-  lines.forEach(line => {
-    line = line.trim();
-    if (!line) return;
-
-    // câu hỏi
-    if (!line.startsWith("A.") &&
-        !line.startsWith("B.") &&
-        !line.startsWith("C.") &&
-        !line.startsWith("D.") &&
-        !line.startsWith("_")) {
-
-      current = {
-        question: line,
-        a: "", b: "", c: "", d: "",
-        correct: "",
-        type: "single"
-      };
-
-      questions.push(current);
-    }
-
-    // đáp án
-    if (line.startsWith("A.")) current.a = clean(line, "a", current);
-    if (line.startsWith("B.")) current.b = clean(line, "b", current);
-    if (line.startsWith("C.")) current.c = clean(line, "c", current);
-    if (line.startsWith("D.")) current.d = clean(line, "d", current);
-
-    // tự luận / đúng sai
-    if (line.startsWith("_")) {
-      current.type = "short";
-      current.correct = line.replace(/_/g, "");
-    }
-  });
-
-  // gửi lên server
-  questions.forEach(q => {
-    fetch("/api/questions", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify(q)
-    });
-  });
-
-  alert("Upload xong!");
-}
-
-// xử lý đáp án đúng
-function clean(line, key, obj) {
-  let text = line.substring(2).trim();
-
-  if (text.includes("_")) {
-    obj.correct = key;
-    text = text.replace(/_/g, "");
-  }
-
-  return text;
 }
 </script>
 
