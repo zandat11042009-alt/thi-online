@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Admin</title>
+<style>
+body {
+  font-family: Arial;
+  background: #f4f6fb;
+  text-align: center;
+}
+.box {
+  background: white;
+  margin: 50px auto;
+  padding: 20px;
+  width: 300px;
+  border-radius: 10px;
+}
+input {
+  width: 90%;
+  padding: 8px;
+  margin: 10px 0;
+}
+button {
+  padding: 10px;
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Đăng nhập Admin</h2>
+  <input type="text" id="user" placeholder="Tài khoản">
+  <input type="password" id="pass" placeholder="Mật khẩu">
+  <button onclick="login()">Đăng nhập</button>
+</div>
+
+<script>
+function login() {
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+
+  if(user === "admin" && pass === "123456") {
+    alert("Đăng nhập thành công!");
+  } else {
+    alert("Sai tài khoản!");
+  }
+}
+</script>
+
+</body>
+</html>
