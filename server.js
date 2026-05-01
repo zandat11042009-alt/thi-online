@@ -1,18 +1,31 @@
 const express = require("express");
+const fs = require("fs");
+
 const app = express();
 
 app.use(express.json());
 app.use(express.static("public"));
 
-let questions = []; // lưu tạm (RAM)
+const FILE = "questions.json";
 
-app.post("/add-question", (req, res) => {
-    questions.push(req.body);
-    res.json({ message: "Đã thêm câu hỏi" });
+// lấy đề
+app.get("/api/questions", (req, res) => {
+  if (!fs.existsSync(FILE)) return res.json([]);
+  const data = JSON.parse(fs.readFileSync(FILE));
+  res.json(data);
 });
 
-app.get("/questions", (req, res) => {
-    res.json(questions);
+// thêm câu hỏi
+app.post("/api/questions", (req, res) => {
+  let data = [];
+  if (fs.existsSync(FILE)) {
+    data = JSON.parse(fs.readFileSync(FILE));
+  }
+
+  data.push(req.body);
+  fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
+
+  res.json({ message: "Đã lưu câu hỏi" });
 });
 
 const PORT = process.env.PORT || 3000;
